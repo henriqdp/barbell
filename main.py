@@ -2,8 +2,11 @@ from barbell import Barbell
 
 environment_name = "CartPole-v0"
 
-b = Barbell.new(environment_name)
+b = Barbell(environment_name)
 
-for i in xrange(1000):
-    action = Barbell.action_space.sample()
-    observation, reward, done, info = Barbell.step(action)
+for i in range(1000):
+    b.env.render()
+    action = b.action_space.sample()
+    observation, reward, done, info = b.step(action)
+    if done:
+        b.reset()
