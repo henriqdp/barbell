@@ -1,17 +1,21 @@
-import gym
-import yaml
+import pyglet
+from pyglet.window import Window
+import pymunk
+import random
 
-class Barbell:
-    def __init__(self, env_name):
-        if ".yaml" in env_name:
-            print("LOL YAML file")
-        else:
-            self.env = gym.make(env_name)
-            self.action_space = self.env.action_space
-            self.env.reset()
 
-    def step(self, action):
-        return self.env.step(action)
+class Barbell(Window):
+    def __init__(self, mode="graphic"):
+        self.space = pymunk.Space()
+        self.epoch = 0
 
-    def reset(self):
-        self.env.reset()
+        if mode == "graphic":
+            super().__init__(width=800, height=800)
+
+        pyglet.clock.schedule(self.update)
+
+    def on_draw(self):
+        print(random.randint(0, 10))
+
+    def update(self, dt):
+        pass
