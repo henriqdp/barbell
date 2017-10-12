@@ -1,26 +1,24 @@
-import pyglet
-from .. import Barbell
-from API.object import Object
+import pygame
+import Box2D  # NOQA
+
+from .bodypart import BodyPart
+from .screen import Screen
 
 
-class API:
-    def __init__(self, verbose=False, mode="graphic"):
-        self.verbose = verbose
-        self.mode = mode
+class Barbell(object):
+    def __init__(self, structure):
+        try:
+            self.parts = []
+            for part in structure["PARTS"]:
+                self.parts.append(BodyPart(part))
+        except KeyError:
+            print("[WARNING] section 'PARTS' was not declared")
+        self.structure = structure
+        self.screen = Screen(structure, pygame)
+        self.running = True
 
-    def initializeBarbell(self):
-        self.app = pyglet.app
-        self.instance = Barbell()
-
-    def add_object(self):
-        new_object = Object(self.instance.space)
-        self.instance.objects.append(new_object)
-
-    def add_circle(self):
-        pass
-
-    def add_rectangle(self):
-        pass
-
-    def run(self):
-        self.app.run()
+    def step(self):
+        events = self.screen.check_events()
+        if 'exit' in events:
+            self.running = False
+        self.screen.fill()

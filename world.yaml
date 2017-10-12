@@ -1,0 +1,11 @@
+PARTS:
+  - arm:
+      type: box
+  - torso:
+      type: box
+FLOOR:
+  type: lala
+SCREEN:
+  width: 640
+  height: 480
+  caption: Barbell

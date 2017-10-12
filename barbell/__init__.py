@@ -1,27 +1,17 @@
-import pyglet
-from pyglet.window import Window
-# from pyglet.text import Label
-import pymunk
-# import random
+import sys
+
+import Box2D  # NOQA
+import pygame  # NOQA
+import yaml
+
+from .API import Barbell
 
 
-class Barbell(Window):
-    def __init__(self, mode="graphic"):
-        # Basic initial definitions: physics space and epoch
-        self.space = pymunk.Space()
-        self.epoch = 0
-
-        if mode == "graphic":
-            super().__init__(width=800, height=800)
-
-        # Objects vector. Objects are added through API calls
-        self.objects = []
-
-        pyglet.clock.schedule(self.update)
-
-    def on_draw(self):
-        # pyglet.gl.glClearColor(1, 1, 1, 1)
-        self.label.draw()
-
-    def update(self, dt):
-        self.clear()
+def from_file(filename=None):
+    if filename:
+        with open(filename, 'r') as raw_data:
+            data = yaml.load(raw_data)
+            barbell = Barbell(data)
+            return barbell
+    else:
+        sys.exit('[ERROR] a filename must be informed')
