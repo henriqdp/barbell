@@ -1,11 +1,16 @@
+SCREEN:
+  width: 1024
+  height: 768
+  target_fps: 60
+
 PARTS:
   - arm:
       type: box
+      vertices:
+        - [10, 20]
+        - [50, 35]
   - torso:
       type: box
-FLOOR:
-  type: lala
-SCREEN:
-  width: 640
-  height: 480
-  caption: Barbell
+
+WORLD:
+  floor: default

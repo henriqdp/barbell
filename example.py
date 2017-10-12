@@ -81,7 +81,7 @@ while running:
             # right and downward directions. This means we must flip
             # the y components.
             vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
-
+            print(colors[body.type])
             pygame.draw.polygon(screen, colors[body.type], vertices)
 
     # Make Box2D simulate the physics of our world for one step.
