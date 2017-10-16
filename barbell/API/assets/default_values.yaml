@@ -18,3 +18,6 @@ FLOOR:
 PART:
   density: 1
   friction: 0.25
+  initial_position: [10,15]
+  angle: 20
+  color: [155,155,155,0]

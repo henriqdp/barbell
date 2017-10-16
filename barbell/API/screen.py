@@ -1,5 +1,6 @@
+import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
-from .utils import load_default_values, fill_in_with_default
+from .utils import load_default_values, fill_in_with_default, coord_box2d_to_pygame
 
 
 class Screen(object):
@@ -12,7 +13,7 @@ class Screen(object):
         'ppm'
     ]
 
-    def __init__(self, screen_structure, pygame):
+    def __init__(self, screen_structure):
         default_values = load_default_values("SCREEN")
         screen_values = fill_in_with_default(screen_structure, default_values, self.keys)
         self.values = screen_values
@@ -43,10 +44,21 @@ class Screen(object):
                 vertices = [(v[0], self.values["height"] - v[1]) for v in vertices]
                 self.pygame.draw.polygon(self.screen, world.values["floor_color"], vertices)
 
+    def draw_parts(self, parts):
+        for part in parts:
+            for fixture in part.body.fixtures:
+                shape = fixture.shape
+                vertices = [(part.body.transform * v) * self.values["ppm"] for v in shape.vertices]
+                vertices = [(v[0], self.values["height"] - v[1]) for v in vertices]
+                self.pygame.draw.polygon(self.screen, part.color, vertices)
+
     def flip(self):
         self.pygame.display.flip()
 
-    def update(self, world):
+    def update(self, world, parts):
         self.fill()
         self.draw_floor(world)
+        self.draw_parts(parts)
+        world.step(1 / self.values["target_fps"])
+        self.clock.tick(self.values["target_fps"])
         self.flip()

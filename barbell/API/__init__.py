@@ -1,6 +1,3 @@
-import pygame
-import Box2D  # NOQA
-
 from .bodypart import BodyPart
 from .screen import Screen
 from .world import World
@@ -32,17 +29,17 @@ class Barbell(object):
         self.running = True
 
     def initialize_screen(self, screen_structure):
-        self.screen = Screen(screen_structure, pygame)
+        self.screen = Screen(screen_structure)
 
     def create_world(self, world_structure):
         self.world = World(world_structure)
 
     def create_parts(self, parts_structure):
         for part in parts_structure:
-            self.parts.append(BodyPart(part))
+            self.parts.append(BodyPart(self.world, part))
 
     def step(self):
         events = self.screen.check_events()
         if 'exit' in events:
             self.running = False
-        self.screen.update(self.world)
+        self.screen.update(self.world, self.parts)

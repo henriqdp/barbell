@@ -16,3 +16,7 @@ def fill_in_with_default(values, default_values, keys):
         if key not in values:
             values[key] = default_values[key]
     return values
+
+
+def coord_box2d_to_pygame(vertices):
+    pass  # TODO

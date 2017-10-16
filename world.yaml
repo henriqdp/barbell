@@ -4,13 +4,11 @@ SCREEN:
   target_fps: 60
 
 PARTS:
-  - arm:
-      type: box
-      vertices:
-        - [10, 20]
-        - [50, 35]
-  - torso:
-      type: box
+  - name: torso
+    type: box
+    vertices:
+      - [10, 20]
+      - [50, 35]
 
 WORLD:
   floor: default
