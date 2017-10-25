@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
-from .utils import load_default_values, fill_in_with_default, coord_box2d_to_pygame
+from .utils import (load_default_values, fill_in_with_default,
+                    coord_box2d_to_pygame, get_circle_coordinates)
 
 
 class Screen(object):
@@ -38,19 +39,21 @@ class Screen(object):
             pass  # TODO: draw floor dynamically etc
         else:
             for fixture in world.floor.fixtures:
-                # TODO: arrumar esse código porco
                 shape = fixture.shape
-                vertices = [(world.floor.transform * v) * self.values["ppm"] for v in shape.vertices]
-                vertices = [(v[0], self.values["height"] - v[1]) for v in vertices]
+                vertices = coord_box2d_to_pygame(world.floor, self, shape)
                 self.pygame.draw.polygon(self.screen, world.values["floor_color"], vertices)
 
     def draw_parts(self, parts):
         for part in parts:
-            for fixture in part.body.fixtures:
+            for fixture in parts[part].body.fixtures:
                 shape = fixture.shape
-                vertices = [(part.body.transform * v) * self.values["ppm"] for v in shape.vertices]
-                vertices = [(v[0], self.values["height"] - v[1]) for v in vertices]
-                self.pygame.draw.polygon(self.screen, part.color, vertices)
+                if parts[part].type == 'box':
+                    vertices = coord_box2d_to_pygame(parts[part].body, self, shape)
+                    self.pygame.draw.polygon(self.screen, parts[part].color, vertices)
+                elif parts[part].type == 'circle':
+                    circle_coords = get_circle_coordinates(parts[part].body, self, shape)
+                    self.pygame.draw.circle(self.screen, parts[part].color, [int(
+                        x) for x in circle_coords[0:2]], int(circle_coords[2]))
 
     def flip(self):
         self.pygame.display.flip()

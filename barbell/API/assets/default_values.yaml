@@ -21,3 +21,4 @@ PART:
   initial_position: [10,15]
   angle: 20
   color: [155,155,155,0]
+  radius: 1

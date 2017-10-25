@@ -20,7 +20,7 @@ class Barbell(object):
             print("[WARNING] section 'WORLD' not declared, loading default values")
 
         # load PARTS into Barbell
-        self.parts = []
+        self.parts = {}
         if "PARTS" in structure:
             self.create_parts(structure["PARTS"])
         else:
@@ -35,8 +35,12 @@ class Barbell(object):
         self.world = World(world_structure)
 
     def create_parts(self, parts_structure):
-        for part in parts_structure:
-            self.parts.append(BodyPart(self.world, part))
+        for part_structure in parts_structure:
+            for part_name in part_structure:
+                new_part = BodyPart(self.world, part_name, part_structure[part_name])
+                if new_part.name in self.parts:
+                    print("[WARNING] '%s' is being redefined, which may lead to unpredictable behavior" % new_part.name)
+                self.parts[new_part.name] = new_part
 
     def step(self):
         events = self.screen.check_events()
