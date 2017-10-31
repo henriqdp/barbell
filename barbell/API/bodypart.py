@@ -9,9 +9,9 @@ class BodyPart(object):
     keys = [
         'density',
         'friction',
-        'initial_position',
         'angle',
         'color',
+        'static'
     ]
 
     mandatory_keys = [
@@ -50,19 +50,24 @@ class BodyPart(object):
 
     def create_body(self, world, part_values):
         # create part's body
-        dynamic_body = world.CreateDynamicBody(position=part_values["initial_position"],
-                                               angle=part_values["angle"])
+
+        if part_values["static"] is True:
+            body = world.CreateStaticBody(position=part_values["initial_position"],
+                                          angle=part_values["angle"])
+        else:
+            body = world.CreateDynamicBody(position=part_values["initial_position"],
+                                           angle=part_values["angle"])
 
         if self.type == 'box':
-            dynamic_body.CreatePolygonFixture(box=part_values["box_size"],
-                                              density=part_values["density"],
-                                              friction=part_values["friction"])
+            body.CreatePolygonFixture(box=part_values["box_size"],
+                                      density=part_values["density"],
+                                      friction=part_values["friction"])
         elif self.type == 'circle':
-            dynamic_body.CreateCircleFixture(radius=part_values["radius"],
-                                             density=part_values["density"],
-                                             friction=part_values["friction"])
+            body.CreateCircleFixture(radius=part_values["radius"],
+                                     density=part_values["density"],
+                                     friction=part_values["friction"])
 
-        self.body = dynamic_body
+        self.body = body
 
     def check_mandatory_values(self, part_values):
         for key in self.mandatory_keys:
