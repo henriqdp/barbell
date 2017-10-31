@@ -1,5 +1,7 @@
 import sys
 
+from Box2D import b2Vec2
+
 from .utils import load_default_values, fill_in_with_default
 
 
@@ -67,3 +69,15 @@ class BodyPart(object):
             for key in self.circle_mandatory_keys:
                 if key not in part_values:
                     sys.exit("Missing key for circle %s: %s" % (self.name, key,))
+
+    def apply_force(self, force_type, force_vector):
+        if force_type == "local":
+            force_vector = self.body.GetWorldVector(localVector=force_vector)
+            print(force_vector)
+        elif force_type == "global":
+            force_vector = b2Vec2(force_vector[0], force_vector[1])
+        else:
+            print("[WARNING] %s is not a valid force type." % force_type)
+            return
+        point = self.body.GetWorldPoint(localPoint=(0.0, 0.0))
+        self.body.ApplyForce(force_vector, point, True)

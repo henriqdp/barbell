@@ -27,6 +27,7 @@ class Barbell(object):
             print("[WARNING] section 'PARTS' not declared, your agent simply does not exist. Is that what you wanted to achieve?")
 
         self.running = True
+        self.events = []
 
     def initialize_screen(self, screen_structure):
         self.screen = Screen(screen_structure)
@@ -46,4 +47,8 @@ class Barbell(object):
         events = self.screen.check_events()
         if 'exit' in events:
             self.running = False
+        self.events = events
         self.screen.update(self.world, self.parts)
+
+    def get_events(self):
+        return self.screen.check_events()
