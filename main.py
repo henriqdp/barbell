@@ -1,6 +1,7 @@
-from barbell.API import API
+import barbell
 
-print("teste")
+barbell = barbell.from_file("world.yaml")
 
-api = API(verbose=True)
-api.run()
+while barbell.running:
+    barbell.step()
+# print(barbell)

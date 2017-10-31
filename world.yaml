@@ -1,0 +1,24 @@
+SCREEN:
+  width: 24
+  height: 18
+  target_fps: 60
+  background_color: [0,0,0,0]
+
+PARTS:
+  - torso:
+      type: box
+      initial_position: [4, 12]
+      box_size: [2.5, 1]
+      angle: 45
+  - other_torso:
+      type: box
+      initial_position: [4, 18]
+      box_size: [2, 2]
+      angle: 45
+  - wheel:
+      type: circle
+      initial_position: [10, 12]
+      radius: 2.5
+
+WORLD:
+  floor: default
