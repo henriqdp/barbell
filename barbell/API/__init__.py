@@ -43,6 +43,10 @@ class Barbell(object):
                     print("[WARNING] '%s' is being redefined, which may lead to unpredictable behavior" % new_part.name)
                 self.parts[new_part.name] = new_part
 
+    def reset(self):
+            for part in self.parts:
+                self.parts[part].reset(self.world)
+
     def step(self):
         events = self.screen.check_events()
         if 'exit' in events:

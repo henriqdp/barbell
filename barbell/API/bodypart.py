@@ -40,6 +40,15 @@ class BodyPart(object):
         self.type = part_values["type"]
         self.color = part_values["color"]
 
+        self.create_body(world, part_values)
+
+        self.values = part_values
+
+    def reset(self, world):
+        world.DestroyBody(self.body)
+        self.create_body(world, self.values)
+
+    def create_body(self, world, part_values):
         # create part's body
         dynamic_body = world.CreateDynamicBody(position=part_values["initial_position"],
                                                angle=part_values["angle"])
