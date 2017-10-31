@@ -17,6 +17,14 @@ class BodyPart(object):
         'type',
     ]
 
+    box_mandatory_keys = [
+        'box_size'
+    ]
+
+    circle_mandatory_keys = [
+        'radius'
+    ]
+
     def __init__(self, world, part_name, part_values):
         self.name = part_name
 
@@ -31,16 +39,31 @@ class BodyPart(object):
         self.color = part_values["color"]
 
         # create part's body
-        dynamic_body = world.CreateDynamicBody(position=part_values["initial_position"], angle=part_values["angle"])
+        dynamic_body = world.CreateDynamicBody(position=part_values["initial_position"],
+                                               angle=part_values["angle"])
 
         if self.type == 'box':
-            dynamic_body.CreatePolygonFixture(box=(2, 1), density=1, friction=0.3)
+            dynamic_body.CreatePolygonFixture(box=part_values["box_size"],
+                                              density=part_values["density"],
+                                              friction=part_values["friction"])
         elif self.type == 'circle':
-            dynamic_body.CreateCircleFixture(radius=0.5, density=1, friction=0.3)
+            dynamic_body.CreateCircleFixture(radius=part_values["radius"],
+                                             density=part_values["density"],
+                                             friction=part_values["friction"])
 
         self.body = dynamic_body
 
     def check_mandatory_values(self, part_values):
         for key in self.mandatory_keys:
             if key not in part_values:
-                sys.exit("Missing key in part: %s" % key)
+                sys.exit("Missing key in part %s: %s" % (self.name, key,))
+
+        if part_values["type"] == 'box':
+            for key in self.box_mandatory_keys:
+                if key not in part_values:
+                    sys.exit("Missing key for box %s: %s" % (self.name, key,))
+
+        elif part_values["type"] == 'circle':
+            for key in self.circle_mandatory_keys:
+                if key not in part_values:
+                    sys.exit("Missing key for circle %s: %s" % (self.name, key,))

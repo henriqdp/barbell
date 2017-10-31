@@ -19,7 +19,9 @@ class Screen(object):
         screen_values = fill_in_with_default(screen_structure, default_values, self.keys)
         self.values = screen_values
         self.pygame = pygame
-        self.screen = self.pygame.display.set_mode((self.values["width"], self.values["height"]), 0, 32)
+
+        screensize = self.get_pygame_screensize()
+        self.screen = self.pygame.display.set_mode(screensize, 0, 32)
         self.pygame.display.set_caption(self.values["caption"])
         self.clock = self.pygame.time.Clock()
 
@@ -33,6 +35,11 @@ class Screen(object):
 
     def fill(self):
         self.screen.fill(self.values["background_color"])
+
+    def get_pygame_screensize(self):
+        screensize = (int(self.values["width"] * self.values["ppm"]),
+                      int(self.values["height"] * self.values["ppm"]))
+        return screensize
 
     def draw_floor(self, world):
         if isinstance(world.floor, list):

@@ -32,7 +32,7 @@ class Barbell(object):
         self.screen = Screen(screen_structure)
 
     def create_world(self, world_structure):
-        self.world = World(world_structure)
+        self.world = World(world_structure, self.screen)
 
     def create_parts(self, parts_structure):
         for part_structure in parts_structure:

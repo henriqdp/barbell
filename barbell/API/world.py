@@ -13,7 +13,7 @@ class World(b2World):
         'do_sleep',
     ]
 
-    def __init__(self, world_structure):
+    def __init__(self, world_structure, screen):
         default_values = load_default_values(self.name)
         world_structure = fill_in_with_default(world_structure, default_values, self.keys)
         self.values = world_structure
@@ -23,9 +23,9 @@ class World(b2World):
         if "floor" in self.values:
             if self.values["floor"] == "default":
                 floor_values = load_default_values(self.floor_name)
-
+                floor_size = [screen.values["width"], 2]
                 floor_body = self.CreateStaticBody(position=floor_values["position"],
-                                                   shapes=polygonShape(box=floor_values["box"],))
+                                                   shapes=polygonShape(box=floor_size,))
 
                 self.floor = floor_body
                 self.values["floor_color"] = floor_values["color"]

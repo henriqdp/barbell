@@ -20,7 +20,7 @@ def fill_in_with_default(values, default_values, keys):
 
 def coord_box2d_to_pygame(body, screen, shape):
     vertices = [(body.transform * v) * screen.values["ppm"] for v in shape.vertices]
-    vertices = [(v[0], screen.values["height"] - v[1]) for v in vertices]
+    vertices = [(v[0], screen.get_pygame_screensize()[1] - v[1]) for v in vertices]
     return vertices
 
 
@@ -28,7 +28,7 @@ def get_circle_coordinates(body, screen, shape):
     ppm = screen.values["ppm"]
     circle_coords = body.transform * shape.pos * ppm
     circle_coords = (circle_coords[0],
-                     screen.values["height"] - circle_coords[1],
+                     screen.get_pygame_screensize()[1] - circle_coords[1],
                      shape.radius * ppm)
 
     return circle_coords
