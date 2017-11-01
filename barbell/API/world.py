@@ -13,6 +13,7 @@ class World(b2World):
     keys = [
         'gravity',
         'do_sleep',
+        'floor'
     ]
 
     def __init__(self, world_structure, screen):
@@ -32,13 +33,11 @@ class World(b2World):
                 self.floor = floor_body
                 self.values["floor_color"] = floor_values["color"]
             elif self.values["floor"] == "none":
-                pass
-
-        # self.joints = []
+                self.floor = None
 
     def create_joint(self, parts, joint):
-        if 'type' not in joint:
-            sys.exit("[ERROR] Key 'type' is mandatory for joint")
+        if 'type' not in joint or 'connects' not in joint:
+            sys.exit("[ERROR] Keys 'type' and 'connects' is mandatory for joint")
         try:
             partA = parts[joint['connects'][0]]
             partB = parts[joint['connects'][1]]
@@ -66,6 +65,22 @@ class World(b2World):
                     localAnchorA=anchorA,
                     localAnchorB=anchorB
                 )
+
+            elif joint['type'] == 'prismatic':
+                self.CreatePrismaticJoint(
+                    bodyA=partA.body,
+                    bodyB=partB.body,
+                    anchor=(0, 5),
+                    axis=(3, 0),
+                    maxMotorForce=1000,
+                    enableMotor=True,
+                    lowerTranslation=-100,
+                    upperTranslation=100,
+                    enableLimit=True
+                )
+
+            else:
+                print("[WARNING] Unknown joint type '%s' - skipping" % joint['type'])
 
         except KeyError:
             sys.exit("[ERROR] joint (%s, %s) tries to connect parts that do not exist" % (partA, partB,))

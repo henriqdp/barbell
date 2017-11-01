@@ -31,8 +31,10 @@ class Barbell(object):
 
         if "JOINTS" in structure:
             self.create_joints(structure["JOINTS"])
+            self.joints = structure["JOINTS"]
         else:
             print("[WARNING] no joints declared")
+            self.joints = []
 
     def initialize_screen(self, screen_structure):
         self.screen = Screen(screen_structure)
@@ -55,6 +57,8 @@ class Barbell(object):
     def reset(self):
             for part in self.parts:
                 self.parts[part].reset(self.world)
+            for joint in self.joints:
+                self.world.create_joint(self.parts, joint)
 
     def step(self):
         events = self.screen.check_events()

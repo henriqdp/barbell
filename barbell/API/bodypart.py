@@ -2,7 +2,7 @@ import sys
 
 from Box2D import b2Vec2
 
-from .utils import load_default_values, fill_in_with_default
+from .utils import load_default_values, fill_in_with_default, deg_to_rad
 
 
 class BodyPart(object):
@@ -50,6 +50,9 @@ class BodyPart(object):
 
     def create_body(self, world, part_values):
         # create part's body
+
+        if part_values["angle"] != 0:
+            part_values["angle"] = deg_to_rad(part_values["angle"])
 
         if part_values["static"] is True:
             body = world.CreateStaticBody(position=part_values["initial_position"],

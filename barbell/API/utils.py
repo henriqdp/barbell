@@ -1,5 +1,6 @@
 import yaml
 import os
+import math
 
 
 def load_default_values(section=None):
@@ -16,6 +17,10 @@ def fill_in_with_default(values, default_values, keys):
         if key not in values:
             values[key] = default_values[key]
     return values
+
+
+def deg_to_rad(radians):
+    return (radians * math.pi) / 180
 
 
 def vertices_box2d_to_pygame(body, screen, shape):

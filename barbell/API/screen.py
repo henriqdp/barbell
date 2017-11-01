@@ -12,6 +12,7 @@ class Screen(object):
         'target_fps',
         'caption',
         'background_color',
+        'draw_joints',
         'joint_color',
         'joint_width',
         'ppm'
@@ -47,9 +48,7 @@ class Screen(object):
         return screensize
 
     def draw_floor(self, world):
-        if isinstance(world.floor, list):
-            pass  # TODO: draw floor dynamically etc
-        else:
+        if world.floor is not None:
             for fixture in world.floor.fixtures:
                 shape = fixture.shape
                 vertices = vertices_box2d_to_pygame(world.floor, self, shape)
@@ -84,7 +83,9 @@ class Screen(object):
         self.fill()
         self.draw_floor(world)
         self.draw_parts(parts)
-        self.draw_joints(world)
+        if self.values["draw_joints"]:
+            print(self.draw_joints)
+            self.draw_joints(world)
         world.step(1 / self.values["target_fps"])
         self.clock.tick(self.values["target_fps"])
         self.flip()
