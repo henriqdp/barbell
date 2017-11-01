@@ -87,7 +87,6 @@ class BodyPart(object):
     def apply_force(self, force_type, force_vector):
         if force_type == "local":
             force_vector = self.body.GetWorldVector(localVector=force_vector)
-            print(force_vector)
         elif force_type == "global":
             force_vector = b2Vec2(force_vector[0], force_vector[1])
         else:

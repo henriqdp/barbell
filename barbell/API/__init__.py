@@ -29,6 +29,11 @@ class Barbell(object):
         self.running = True
         self.events = []
 
+        if "JOINTS" in structure:
+            self.create_joints(structure["JOINTS"])
+        else:
+            print("[WARNING] no joints declared")
+
     def initialize_screen(self, screen_structure):
         self.screen = Screen(screen_structure)
 
@@ -42,6 +47,10 @@ class Barbell(object):
                 if new_part.name in self.parts:
                     print("[WARNING] '%s' is being redefined, which may lead to unpredictable behavior" % new_part.name)
                 self.parts[new_part.name] = new_part
+
+    def create_joints(self, joints_structure):
+        for joint in joints_structure:
+            self.world.create_joint(self.parts, joint)
 
     def reset(self):
             for part in self.parts:

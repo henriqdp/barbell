@@ -1,3 +1,5 @@
+import sys
+
 from Box2D import b2World
 from Box2D.b2 import (polygonShape)
 
@@ -31,6 +33,24 @@ class World(b2World):
                 self.values["floor_color"] = floor_values["color"]
             elif self.values["floor"] == "none":
                 pass
+
+        # self.joints = []
+
+    def create_joint(self, parts, joint):
+        if 'type' not in joint:
+            sys.exit("[ERROR] Key 'type' is mandatory for joint")
+        try:
+            if joint['type'] == 'distance':
+                partA = parts[joint['connects'][0]]
+                partB = parts[joint['connects'][1]]
+                self.CreateDistanceJoint(
+                    bodyA=partA.body,
+                    bodyB=partB.body,
+                    anchorA=partA.body.position,
+                    anchorB=partB.body.position,
+                )
+        except KeyError:
+            sys.exit("[ERROR] joint (%s, %s) tries to connect parts that do not exist" % (partA, partB,))
 
     def step(self, delta):
         super().Step(delta, 10, 10)
