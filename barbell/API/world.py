@@ -40,15 +40,33 @@ class World(b2World):
         if 'type' not in joint:
             sys.exit("[ERROR] Key 'type' is mandatory for joint")
         try:
+            partA = parts[joint['connects'][0]]
+            partB = parts[joint['connects'][1]]
+
             if joint['type'] == 'distance':
-                partA = parts[joint['connects'][0]]
-                partB = parts[joint['connects'][1]]
                 self.CreateDistanceJoint(
                     bodyA=partA.body,
                     bodyB=partB.body,
                     anchorA=partA.body.position,
                     anchorB=partB.body.position,
                 )
+            elif joint['type'] == 'revolute':
+                if 'anchor_a' in joint:
+                    anchorA = joint['anchor_a']
+                else:
+                    anchorA = (0, 0)
+                if 'anchor_b' in joint:
+                    anchorB = joint['anchor_b']
+                else:
+                    anchorB = (0, 0)
+
+                self.CreateRevoluteJoint(
+                    bodyA=partA.body,
+                    bodyB=partB.body,
+                    localAnchorA=anchorA,
+                    localAnchorB=anchorB
+                )
+
         except KeyError:
             sys.exit("[ERROR] joint (%s, %s) tries to connect parts that do not exist" % (partA, partB,))
 
