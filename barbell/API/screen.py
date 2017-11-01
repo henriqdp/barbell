@@ -31,6 +31,8 @@ class Screen(object):
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 # The user closed the window or pressed escape
                 events.append('exit')
+            elif event.type == KEYDOWN:
+                events.append(event.key)
         return events
 
     def fill(self):

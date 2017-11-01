@@ -29,8 +29,8 @@ class World(b2World):
 
                 self.floor = floor_body
                 self.values["floor_color"] = floor_values["color"]
-            else:
-                pass  # TODO: create floor dynamically
+            elif self.values["floor"] == "none":
+                pass
 
     def step(self, delta):
         super().Step(delta, 10, 10)

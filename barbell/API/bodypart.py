@@ -1,5 +1,7 @@
 import sys
 
+from Box2D import b2Vec2
+
 from .utils import load_default_values, fill_in_with_default
 
 
@@ -7,9 +9,9 @@ class BodyPart(object):
     keys = [
         'density',
         'friction',
-        'initial_position',
         'angle',
         'color',
+        'static'
     ]
 
     mandatory_keys = [
@@ -38,20 +40,34 @@ class BodyPart(object):
         self.type = part_values["type"]
         self.color = part_values["color"]
 
+        self.create_body(world, part_values)
+
+        self.values = part_values
+
+    def reset(self, world):
+        world.DestroyBody(self.body)
+        self.create_body(world, self.values)
+
+    def create_body(self, world, part_values):
         # create part's body
-        dynamic_body = world.CreateDynamicBody(position=part_values["initial_position"],
-                                               angle=part_values["angle"])
+
+        if part_values["static"] is True:
+            body = world.CreateStaticBody(position=part_values["initial_position"],
+                                          angle=part_values["angle"])
+        else:
+            body = world.CreateDynamicBody(position=part_values["initial_position"],
+                                           angle=part_values["angle"])
 
         if self.type == 'box':
-            dynamic_body.CreatePolygonFixture(box=part_values["box_size"],
-                                              density=part_values["density"],
-                                              friction=part_values["friction"])
+            body.CreatePolygonFixture(box=part_values["box_size"],
+                                      density=part_values["density"],
+                                      friction=part_values["friction"])
         elif self.type == 'circle':
-            dynamic_body.CreateCircleFixture(radius=part_values["radius"],
-                                             density=part_values["density"],
-                                             friction=part_values["friction"])
+            body.CreateCircleFixture(radius=part_values["radius"],
+                                     density=part_values["density"],
+                                     friction=part_values["friction"])
 
-        self.body = dynamic_body
+        self.body = body
 
     def check_mandatory_values(self, part_values):
         for key in self.mandatory_keys:
@@ -67,3 +83,15 @@ class BodyPart(object):
             for key in self.circle_mandatory_keys:
                 if key not in part_values:
                     sys.exit("Missing key for circle %s: %s" % (self.name, key,))
+
+    def apply_force(self, force_type, force_vector):
+        if force_type == "local":
+            force_vector = self.body.GetWorldVector(localVector=force_vector)
+            print(force_vector)
+        elif force_type == "global":
+            force_vector = b2Vec2(force_vector[0], force_vector[1])
+        else:
+            print("[WARNING] %s is not a valid force type." % force_type)
+            return
+        point = self.body.GetWorldPoint(localPoint=(0.0, 0.0))
+        self.body.ApplyForce(force_vector, point, True)
