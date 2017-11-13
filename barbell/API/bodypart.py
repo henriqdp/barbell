@@ -1,8 +1,7 @@
-import sys
-
 from Box2D import b2Vec2
 
-from .utils import load_default_values, fill_in_with_default, deg_to_rad
+from .utils import (load_default_values, fill_in_with_default, deg_to_rad,
+                    check_mandatory_keys)
 
 
 class BodyPart(object):
@@ -27,10 +26,10 @@ class BodyPart(object):
         'radius'
     ]
 
-    def __init__(self, world, part_name, part_values):
+    def __init__(self, environment, part_name, part_values):
         self.name = part_name
 
-        # check for mandatory keys in world definition
+        # check for mandatory keys in part definition
         self.check_mandatory_values(part_values)
 
         # fill uninformed bodypart values with defaults
@@ -40,26 +39,26 @@ class BodyPart(object):
         self.type = part_values["type"]
         self.color = part_values["color"]
 
-        self.create_body(world, part_values)
+        self.create_body(environment, part_values)
 
         self.values = part_values
 
-    def reset(self, world):
-        world.DestroyBody(self.body)
-        self.create_body(world, self.values)
+    def reset(self, environment):
+        environment.DestroyBody(self.body)
+        self.create_body(environment, self.values)
 
-    def create_body(self, world, part_values):
+    def create_body(self, environment, part_values):
         # create part's body
 
         if part_values["angle"] != 0:
             part_values["angle"] = deg_to_rad(part_values["angle"])
 
         if part_values["static"] is True:
-            body = world.CreateStaticBody(position=part_values["initial_position"],
-                                          angle=part_values["angle"])
+            body = environment.CreateStaticBody(position=part_values["initial_position"],
+                                                angle=part_values["angle"])
         else:
-            body = world.CreateDynamicBody(position=part_values["initial_position"],
-                                           angle=part_values["angle"])
+            body = environment.CreateDynamicBody(position=part_values["initial_position"],
+                                                 angle=part_values["angle"])
 
         if self.type == 'box':
             body.CreatePolygonFixture(box=part_values["box_size"],
@@ -69,23 +68,19 @@ class BodyPart(object):
             body.CreateCircleFixture(radius=part_values["radius"],
                                      density=part_values["density"],
                                      friction=part_values["friction"])
+        elif self.type == 'polygon':
+            pass  # TODO
 
         self.body = body
 
     def check_mandatory_values(self, part_values):
-        for key in self.mandatory_keys:
-            if key not in part_values:
-                sys.exit("Missing key in part %s: %s" % (self.name, key,))
+        check_mandatory_keys(self.mandatory_keys, part_values, self.name)
 
         if part_values["type"] == 'box':
-            for key in self.box_mandatory_keys:
-                if key not in part_values:
-                    sys.exit("Missing key for box %s: %s" % (self.name, key,))
+            check_mandatory_keys(self.box_mandatory_keys, part_values, self.name)
 
         elif part_values["type"] == 'circle':
-            for key in self.circle_mandatory_keys:
-                if key not in part_values:
-                    sys.exit("Missing key for circle %s: %s" % (self.name, key,))
+            check_mandatory_keys(self.circle_mandatory_keys, part_values, self.name)
 
     def apply_force(self, force_type, force_vector):
         if force_type == "local":

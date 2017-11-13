@@ -1,4 +1,4 @@
-SCREEN:
+DOMAIN:
   width: 640
   height: 480
   caption: another Barbell project
@@ -9,14 +9,14 @@ SCREEN:
   joint_width: 1
   ppm: 50
 
-WORLD:
+ENVIRONMENT:
   gravity: [0,-10]
   do_sleep: True
   floor: none
+  objects_color: [0, 77, 0, 0]
 
 FLOOR:
   position: [0,0]
-  color: [128,128,128,0]
 
 PART:
   density: 1
@@ -25,3 +25,7 @@ PART:
   color: [155,155,155,0]
   radius: 1
   static: false
+
+JOINT:
+  anchor_a: [0, 0]
+  anchor_b: [0, 0]

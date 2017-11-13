@@ -19,7 +19,7 @@ class Screen(object):
     ]
 
     def __init__(self, screen_structure):
-        default_values = load_default_values("SCREEN")
+        default_values = load_default_values("DOMAIN")
         screen_values = fill_in_with_default(screen_structure, default_values, self.keys)
         self.values = screen_values
         self.pygame = pygame
@@ -47,6 +47,7 @@ class Screen(object):
                       int(self.values["height"] * self.values["ppm"]))
         return screensize
 
+    #  TODO: definir se é realmente necessário
     def draw_floor(self, world):
         if world.floor is not None:
             for fixture in world.floor.fixtures:
@@ -54,18 +55,28 @@ class Screen(object):
                 vertices = vertices_box2d_to_pygame(world.floor, self, shape)
                 self.pygame.draw.polygon(self.screen, world.values["floor_color"], vertices)
 
-    def draw_parts(self, parts):
-        for part in parts:
-            for fixture in parts[part].body.fixtures:
-                shape = fixture.shape
-                if parts[part].type == 'box':
-                    vertices = vertices_box2d_to_pygame(parts[part].body, self, shape)
-                    self.pygame.draw.polygon(self.screen, parts[part].color, vertices)
-                elif parts[part].type == 'circle':
-                    circle_coords = get_circle_coordinates(parts[part].body, self, shape)
-                    self.pygame.draw.circle(self.screen, parts[part].color, [int(
-                        x) for x in circle_coords[0:2]], int(circle_coords[2]))
+    def draw_environment(self, environment):
+        pass
 
+    def draw_agent(self, agent):
+        for part in agent.parts:
+            self.draw_part(agent.parts[part])
+
+    def draw_part(self, part):
+        for fixture in part.body.fixtures:
+            shape = fixture.shape
+            if part.type == 'box':
+                vertices = vertices_box2d_to_pygame(part.body, self, shape)
+                self.pygame.draw.polygon(self.screen, part.color, vertices)
+            elif part.type == 'circle':
+                circle_coords = get_circle_coordinates(part.body, self, shape)
+                self.pygame.draw.circle(self.screen, part.color,
+                                        [int(x) for x in circle_coords[0:2]],
+                                        int(circle_coords[2]))
+            elif part.type == 'polygon':
+                pass  # TODO: desenhar polígono
+
+    # TODO: ver se vou usar isso mesmo
     def draw_joints(self, world):
         for joint in world.joints:
             start = coord_box2d_to_pygame(joint.anchorA, self)
@@ -79,13 +90,13 @@ class Screen(object):
     def flip(self):
         self.pygame.display.flip()
 
-    def update(self, world, parts):
+    def step(self, target_fps):
+        self.clock.tick(target_fps)
+
+    def update(self, environment, agent):
         self.fill()
-        self.draw_floor(world)
-        self.draw_parts(parts)
-        if self.values["draw_joints"]:
-            print(self.draw_joints)
-            self.draw_joints(world)
-        world.step(1 / self.values["target_fps"])
-        self.clock.tick(self.values["target_fps"])
+        self.draw_agent(agent)
+        self.draw_environment(environment)
+        environment.step(self.values["target_fps"])
+        self.step(self.values["target_fps"])
         self.flip()
