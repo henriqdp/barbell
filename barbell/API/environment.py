@@ -44,27 +44,27 @@ class Environment(b2World):
             elif self.values["floor"] == "none":
                 self.floor = None
 
-    def create_joint(self, part_a, part_b, joint):
+    def create_joint(self, body_a, body_b, joint):
         default_joint = load_default_values(self.joint_name)
         fill_in_with_default(joint, default_joint, self.joint_keys)
         if joint["type"] == "distance":
             self.CreateDistanceJoint(
-                bodyA=part_a.body,
-                bodyB=part_b.body,
-                anchorA=part_a.body.position,
-                anchorB=part_b.body.position
+                bodyA=body_a,
+                bodyB=body_b,
+                anchorA=body_a.position,
+                anchorB=body_b.position
             )
         elif joint["type"] == "revolute":
             self.CreateRevoluteJoint(
-                bodyA=part_a.body,
-                bodyB=part_b.body,
+                bodyA=body_a,
+                bodyB=body_b,
                 localAnchorA=joint["anchor_a"],
                 localAnchorB=joint["anchor_b"]
             )
         elif joint["type"] == "prismatic":
             self.CreatePrismaticJoint(
-                bodyA=part_a.body,
-                bodyB=part_b.body,
+                bodyA=body_a,
+                bodyB=body_b,
                 anchor=(0, 5),
                 axis=(3, 0),
                 maxMotorForce=1000,

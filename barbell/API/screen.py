@@ -55,8 +55,19 @@ class Screen(object):
                 vertices = vertices_box2d_to_pygame(world.floor, self, shape)
                 self.pygame.draw.polygon(self.screen, world.values["floor_color"], vertices)
 
+    def draw_polygon(self, body, color, shape):
+        vertices = vertices_box2d_to_pygame(body, self, shape)
+        self.pygame.draw.polygon(self.screen, color, vertices)
+
+    def draw_circle(self, body, color, shape):
+        circle_coords = get_circle_coordinates(body, self, shape)
+        self.pygame.draw.circle(self.screen, color, [int(x) for x in circle_coords[0:2]],
+                                int(circle_coords[2]))
+
     def draw_environment(self, environment):
-        pass
+        for env_object in environment.objects:
+            for fixture in environment.objects[env_object]:
+                self.draw_polygon(environment.objects[env_object], environment.color, fixture.shape)
 
     def draw_agent(self, agent):
         for part in agent.parts:
@@ -66,14 +77,15 @@ class Screen(object):
         for fixture in part.body.fixtures:
             shape = fixture.shape
             if part.type == 'box':
-                vertices = vertices_box2d_to_pygame(part.body, self, shape)
-                self.pygame.draw.polygon(self.screen, part.color, vertices)
+                self.draw_polygon(part.body, part.color, fixture.shape)
             elif part.type == 'circle':
-                circle_coords = get_circle_coordinates(part.body, self, shape)
-                self.pygame.draw.circle(self.screen, part.color,
-                                        [int(x) for x in circle_coords[0:2]],
-                                        int(circle_coords[2]))
+                self.draw_circle(part.body, part.color, shape)
+                # circle_coords = get_circle_coordinates(part.body, self, shape)
+                # self.pygame.draw.circle(self.screen, part.color,
+                #                         [int(x) for x in circle_coords[0:2]],
+                #                         int(circle_coords[2]))
             elif part.type == 'polygon':
+                # print('polygon')
                 pass  # TODO: desenhar polígono
 
     # TODO: ver se vou usar isso mesmo

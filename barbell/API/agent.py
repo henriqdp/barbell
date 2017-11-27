@@ -26,6 +26,7 @@ class Agent(object):
 
         if "JOINTS" in agent_structure:
             self.initialize_joints(environment, agent_structure["JOINTS"])
+            self.joints_structure = agent_structure["JOINTS"]
         else:
             print("[WARNING] No joints declared for the agent")
 
@@ -40,9 +41,24 @@ class Agent(object):
         for i in range(0, len(joints)):
             check_mandatory_keys(self.joint_mandatory_keys, joints[i], "Joint #%d" % i)
             try:
-                part_a = self.parts[joints[i]["connects"][0]]
-                part_b = self.parts[joints[i]["connects"][1]]
+                # check if agent has part_a
+                if joints[i]["connects"][0] in self.parts:
+                    body_a = self.parts[joints[i]["connects"][0]].body
+                else:
+                    body_a = environment.objects[joints[i]["connects"][0]]
+
+                # check if agent has part_b
+                if joints[i]["connects"][1] in self.parts:
+                    body_b = self.parts[joints[i]["connects"][1]].body
+                else:
+                    body_b = environment.objects[joints[i]["connects"][1]]
+
             except KeyError:
                 sys.exit("[ERROR] Joint #%d is trying to connect nonexistant parts" % i)
 
-            environment.create_joint(part_a, part_b, joints[i])
+            environment.create_joint(body_a, body_b, joints[i])
+
+    def reset(self, environment):
+        for part in self.parts:
+            self.parts[part].reset(environment)
+        self.initialize_joints(environment, self.joints_structure)

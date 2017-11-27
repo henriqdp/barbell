@@ -51,14 +51,16 @@ class BodyPart(object):
         # create part's body
 
         if part_values["angle"] != 0:
-            part_values["angle"] = deg_to_rad(part_values["angle"])
+            angle = deg_to_rad(part_values["angle"])
+        else:
+            angle = 0
 
         if part_values["static"] is True:
             body = environment.CreateStaticBody(position=part_values["initial_position"],
-                                                angle=part_values["angle"])
+                                                angle=angle)
         else:
             body = environment.CreateDynamicBody(position=part_values["initial_position"],
-                                                 angle=part_values["angle"])
+                                                 angle=angle)
 
         if self.type == 'box':
             body.CreatePolygonFixture(box=part_values["box_size"],

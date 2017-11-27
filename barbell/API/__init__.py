@@ -6,7 +6,7 @@ from .agent import Agent
 
 
 class Barbell(object):
-    def __init__(self, structure):
+    def __init__(self, structure, render=True):
         # load SCREEN into Barbell
         if "DOMAIN" in structure:
             self.initialize_screen(structure["DOMAIN"])
@@ -29,6 +29,7 @@ class Barbell(object):
 
         self.running = True
         self.events = []
+        self.render = render
 
     def initialize_screen(self, screen_structure):
         self.screen = Screen(screen_structure)
@@ -39,14 +40,18 @@ class Barbell(object):
     def create_agent(self, agent_structure):
         self.agent = Agent(self.environment, agent_structure)
 
+    def apply_force(force, vector_type=None, vector=None):
+        pass
+
     def reset(self):
-        self.agent.reset()
+        self.agent.reset(self.environment)
 
     def step(self):
         self.events = self.screen.check_events()
         if 'exit' in self.events:
             self.running = False
-        self.screen.update(self.environment, self.agent)
+        if self.render:
+            self.screen.update(self.environment, self.agent)
 
     def get_events(self):
         return self.screen.check_events()
