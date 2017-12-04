@@ -1,3 +1,5 @@
+import sys
+
 from Box2D import b2Vec2
 
 from .utils import (load_default_values, fill_in_with_default, deg_to_rad,
@@ -24,6 +26,10 @@ class BodyPart(object):
 
     circle_mandatory_keys = [
         'radius'
+    ]
+
+    polygon_mandatory_keys = [
+        'vertices'
     ]
 
     def __init__(self, environment, part_name, part_values):
@@ -71,7 +77,17 @@ class BodyPart(object):
                                      density=part_values["density"],
                                      friction=part_values["friction"])
         elif self.type == 'polygon':
-            pass  # TODO
+            if type(part_values["vertices"]) == list:
+                for v in part_values["vertices"]:
+                    if type(v) != list or len(v) != 2:
+                        print("[ERROR] Vertices list of a part must be a list of pairs")
+                        sys.exit()
+            else:
+                print("[ERROR] Vertices list of a part must be a list of pairs")
+                sys.exit()
+            body.CreatePolygonFixture(vertices=part_values["vertices"],
+                                      density=part_values["density"],
+                                      friction=part_values["friction"])
 
         self.body = body
 

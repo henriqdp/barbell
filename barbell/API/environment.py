@@ -3,13 +3,14 @@ import sys
 from Box2D import b2World
 from Box2D.b2 import (polygonShape)
 
-from .utils import load_default_values, fill_in_with_default
+from .utils import load_default_values, fill_in_with_default, deg_to_rad
 
 
 class Environment(b2World):
     name = "ENVIRONMENT"
     floor_name = "FLOOR"
     joint_name = "JOINT"
+    object_name = "OBJECT"
 
     keys = [
         'gravity',
@@ -21,6 +22,16 @@ class Environment(b2World):
     joint_keys = [
         'anchor_a',
         'anchor_b',
+    ]
+
+    object_keys = [
+        'type',
+        'initial_position',
+        'angle',
+        'static',
+        'density',
+        'friction'
+
     ]
 
     def __init__(self, world_structure, screen):
@@ -43,6 +54,48 @@ class Environment(b2World):
                 self.floor = floor_body
             elif self.values["floor"] == "none":
                 self.floor = None
+
+        if "OBJECTS" in self.values:
+            object_values = load_default_values(self.object_name)   # NOQA
+            for world_object in self.values["OBJECTS"]:
+                for object_name in world_object:
+                    object_structure = fill_in_with_default(world_object[object_name], object_values, self.object_keys)
+                    self.objects[object_name] = self.create_object(object_structure)
+
+    def create_object(self, object_values):
+        if object_values["angle"] != 0:
+            angle = deg_to_rad(object_values["angle"])
+        else:
+            angle = 0
+
+        if object_values["static"] is True:
+            body = self.CreateStaticBody(position=object_values["initial_position"],
+                                         angle=angle)
+        else:
+            body = self.CreateDynamicBody(position=object_values["initial_position"],
+                                          angle=angle)
+
+        if object_values["type"] == 'box':
+            body.CreatePolygonFixture(box=object_values["box_size"],
+                                      density=object_values["density"],
+                                      friction=object_values["friction"])
+        elif object_values["type"] == 'circle':
+            body.CreateCircleFixture(radius=object_values["radius"],
+                                     density=object_values["density"],
+                                     friction=object_values["friction"])
+        elif object_values["type"] == 'polygon':
+            if type(object_values["vertices"]) == list:
+                for v in object_values["vertices"]:
+                    if type(v) != list or len(v) != 2:
+                        print("[ERROR] Vertices list of a part must be a list of pairs")
+                        sys.exit()
+            else:
+                print("[ERROR] Vertices list of a part must be a list of pairs")
+                sys.exit()
+            body.CreatePolygonFixture(vertices=object_values["vertices"],
+                                      density=object_values["density"],
+                                      friction=object_values["friction"])
+        return body
 
     def create_joint(self, body_a, body_b, joint):
         default_joint = load_default_values(self.joint_name)

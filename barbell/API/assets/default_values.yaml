@@ -29,3 +29,10 @@ PART:
 JOINT:
   anchor_a: [0, 0]
   anchor_b: [0, 0]
+
+
+OBJECT:
+  angle: 0
+  static: true
+  density: 0.1
+  friction: 0.25

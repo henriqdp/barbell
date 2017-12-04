@@ -85,7 +85,7 @@ class Screen(object):
                 #                         [int(x) for x in circle_coords[0:2]],
                 #                         int(circle_coords[2]))
             elif part.type == 'polygon':
-                # print('polygon')
+                self.draw_polygon(part.body, part.color, fixture.shape)
                 pass  # TODO: desenhar polígono
 
     # TODO: ver se vou usar isso mesmo
