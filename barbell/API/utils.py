@@ -1,6 +1,13 @@
-import yaml
 import os
+import sys
 import math
+import yaml
+
+
+def check_mandatory_keys(keys, structure, structure_name):
+    for key in keys:
+        if key not in structure:
+            sys.exit("[ERROR] Missing key '%s' in structure '%s'" % (key, structure_name,))
 
 
 def load_default_values(section=None):

@@ -1,0 +1,35 @@
+DOMAIN:
+  width: 24
+  height: 18
+  ppm: 50
+
+AGENT:
+  draw_joints: false
+  joint_color: [255,0,0,0]
+  parts_color: [175,175,175,0]
+
+  PARTS:
+    - cart:
+        type: box
+        initial_position: [12, 9]
+        box_size: [2, 1]
+        color: [255,63,63,0]
+    - pole:
+        type: box
+        initial_position: [11, 18]
+        box_size: [2.5, 0.1]
+        angle: 35
+
+  JOINTS:
+    - connects: [pole, cart]
+      type: revolute
+      anchor_a: [-2.3, 0]
+
+ENVIRONMENT:
+  gravity: [0, -10]
+  floor: none
+  OBJECTS:
+    - floor:
+        type: box
+        initial_position: [12, 1]
+        box_size: [12, 0.5]
