@@ -110,3 +110,13 @@ class BodyPart(object):
             return
         point = self.body.GetWorldPoint(localPoint=(0.0, 0.0))
         self.body.ApplyForce(force_vector, point, True)
+
+    def read_state(self):
+        state = {
+            'position': self.body.position,
+            'angularVelocity': self.body.angularVelocity,
+            'angle': self.body.angle,
+            'linearVelocity': (self.body.linearVelocity[0], self.body.linearVelocity[1]),
+        }
+        # print(self.body)
+        return state

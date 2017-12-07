@@ -62,3 +62,12 @@ class Agent(object):
         for part in self.parts:
             self.parts[part].reset(environment)
         self.initialize_joints(environment, self.joints_structure)
+
+    def get_state(self):
+        states = {}
+        for part in self.parts:
+                # if part == 'pole':
+                    # print('pole')
+                    # print(states[part])
+                states[part] = self.parts[part].read_state()
+        return states

@@ -47,11 +47,13 @@ class Barbell(object):
         self.agent.reset(self.environment)
 
     def step(self):
+        state = self.agent.get_state()
         self.events = self.screen.check_events()
         if 'exit' in self.events:
             self.running = False
         if self.render:
             self.screen.update(self.environment, self.agent)
+        return state
 
     def get_events(self):
         return self.screen.check_events()

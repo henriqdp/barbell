@@ -9,7 +9,9 @@ from .utils import load_default_values, fill_in_with_default, deg_to_rad
 class Environment(b2World):
     name = "ENVIRONMENT"
     floor_name = "FLOOR"
-    joint_name = "JOINT"
+    distance_joint_name = "DISTANCE_JOINT"
+    revolute_joint_name = "REVOLUTE_JOINT"
+    prismatic_joint_name = "PRISMATIC_JOINT"
     object_name = "OBJECT"
 
     keys = [
@@ -22,6 +24,29 @@ class Environment(b2World):
     joint_keys = [
         'anchor_a',
         'anchor_b',
+        'anchor_a_offset',
+        'anchor_b_offset',
+    ]
+
+    distance_joint_keys = [
+        'anchor_a_offset',
+        'anchor_b_offset',
+    ]
+
+    revolute_joint_keys = [
+        'anchor_a',
+        'anchor_b',
+    ]
+
+    prismatic_joint_keys = [
+        'anchor',
+        'axis',
+        'max_motor_force',
+        'enable_motor',
+        'motor_speed',
+        'lower_translation',
+        'upper_translation',
+        'enable_limit',
     ]
 
     object_keys = [
@@ -60,6 +85,8 @@ class Environment(b2World):
             for world_object in self.values["OBJECTS"]:
                 for object_name in world_object:
                     object_structure = fill_in_with_default(world_object[object_name], object_values, self.object_keys)
+                    if object_name in self.objects:
+                        sys.exit("[ERROR] Object %s is being redefined" % object_name)
                     self.objects[object_name] = self.create_object(object_structure)
 
     def create_object(self, object_values):
@@ -98,16 +125,18 @@ class Environment(b2World):
         return body
 
     def create_joint(self, body_a, body_b, joint):
-        default_joint = load_default_values(self.joint_name)
-        fill_in_with_default(joint, default_joint, self.joint_keys)
         if joint["type"] == "distance":
+            distance_joint = load_default_values(self.distance_joint_name)
+            fill_in_with_default(joint, distance_joint, self.distance_joint_keys)
             self.CreateDistanceJoint(
                 bodyA=body_a,
                 bodyB=body_b,
-                anchorA=body_a.position,
-                anchorB=body_b.position
+                anchorA=body_a.position + joint["anchor_a_offset"],
+                anchorB=body_b.position + joint["anchor_b_offset"],
             )
         elif joint["type"] == "revolute":
+            revolute_joint = load_default_values(self.revolute_joint_name)
+            fill_in_with_default(joint, revolute_joint, self.revolute_joint_keys)
             self.CreateRevoluteJoint(
                 bodyA=body_a,
                 bodyB=body_b,
@@ -115,16 +144,19 @@ class Environment(b2World):
                 localAnchorB=joint["anchor_b"]
             )
         elif joint["type"] == "prismatic":
+            prismatic_joint = load_default_values(self.prismatic_joint_name)
+            fill_in_with_default(joint, prismatic_joint, self.prismatic_joint_keys)
             self.CreatePrismaticJoint(
                 bodyA=body_a,
                 bodyB=body_b,
-                anchor=(0, 5),
-                axis=(3, 0),
-                maxMotorForce=1000,
-                enableMotor=True,
-                lowerTranslation=-100,
-                upperTranslation=100,
-                enableLimit=True
+                anchor=joint["anchor"],
+                axis=joint["axis"],
+                maxMotorForce=joint["max_motor_force"],
+                enableMotor=joint["enable_motor"],
+                motorSpeed=joint["motor_speed"],
+                lowerTranslation=joint["lower_translation"],
+                upperTranslation=joint["upper_translation"],
+                enableLimit=joint["enable_limit"]
             )
 
         else:

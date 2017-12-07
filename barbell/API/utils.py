@@ -22,7 +22,10 @@ def load_default_values(section=None):
 def fill_in_with_default(values, default_values, keys):
     for key in keys:
         if key not in values:
-            values[key] = default_values[key]
+            if key not in default_values and key not in values:
+                sys.exit("Missing key: %s" % key)
+            else:
+                values[key] = default_values[key]
     return values
 
 

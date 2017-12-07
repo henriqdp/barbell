@@ -1,9 +1,17 @@
 import barbell
 
-barbell = barbell.from_file("world.yaml")
+barbell = barbell.from_file("examples/cartpole.yaml")
+
+print_state = True
 
 while barbell.running:
-    if 119 in barbell.events:
-        barbell.parts["torso"].apply_force("local", (0.0, 1100.0))
-    barbell.step()
-# print(barbell)
+    if 114 in barbell.events:
+        barbell.reset()
+    if 97 in barbell.events:
+        barbell.parts["cart"].apply_force("local", (-10000.0, 0.0))
+    if 100 in barbell.events:
+        barbell.parts["cart"].apply_force("local", (10000.0, 0.0))
+    result = barbell.step()
+    if print_state:
+        print(result)
+        print_state = False

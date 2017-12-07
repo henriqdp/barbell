@@ -1,24 +1,28 @@
 SCREEN:
   width: 24
   height: 18
-  target_fps: 60
-  background_color: [0,0,0,0]
 
 PARTS:
-  - torso:
+  - cart:
       type: box
-      initial_position: [4, 12]
-      box_size: [2.5, 1]
-      angle: 45
-  - other_torso:
+      initial_position: [12, 9]
+      box_size: [2, 1]
+      color: [255,63,63,0]
+  - pole:
       type: box
-      initial_position: [4, 18]
-      box_size: [2, 2]
-      angle: 45
-  - wheel:
-      type: circle
-      initial_position: [10, 12]
-      radius: 2.5
+      initial_position: [12, 18]
+      box_size: [2.5, 0.1]
+      angle: 92
+  - floor:
+      type: box
+      static: true
+      initial_position: [12, 1]
+      box_size: [12, 1]
+      color: [0,0,0,0]
 
-WORLD:
-  floor: default
+JOINTS:
+  - connects: [pole, cart]
+    type: revolute
+    anchor_a: [-2.3, 0]
+  - connects: [floor, cart]
+    type: prismatic

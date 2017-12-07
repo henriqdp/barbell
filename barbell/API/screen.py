@@ -1,4 +1,5 @@
 import pygame
+import Box2D
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 from .utils import (load_default_values, fill_in_with_default,
                     vertices_box2d_to_pygame, get_circle_coordinates,
@@ -93,6 +94,21 @@ class Screen(object):
         for joint in world.joints:
             start = coord_box2d_to_pygame(joint.anchorA, self)
             end = coord_box2d_to_pygame(joint.anchorB, self)
+
+            if joint.anchorA != joint.bodyA.position:  # and type(joint) == Box2D.Box2D.b2DistanceJoint:
+                positionA = coord_box2d_to_pygame(joint.bodyA.position, self)
+                self.pygame.draw.line(self.screen,
+                                      self.values["joint_color"],
+                                      positionA,
+                                      start)
+
+            if joint.anchorB != joint.bodyB.position:  # and type(joint) == Box2D.Box2D.b2DistanceJoint:
+                positionB = coord_box2d_to_pygame(joint.bodyB.position, self)
+                self.pygame.draw.line(self.screen,
+                                      self.values["joint_color"],
+                                      positionB,
+                                      end)
+
             self.pygame.draw.line(self.screen,
                                   self.values["joint_color"],
                                   start,
@@ -109,6 +125,8 @@ class Screen(object):
         self.fill()
         self.draw_agent(agent)
         self.draw_environment(environment)
+        if self.values["draw_joints"]:
+            self.draw_joints(environment)
         environment.step(self.values["target_fps"])
         self.step(self.values["target_fps"])
         self.flip()

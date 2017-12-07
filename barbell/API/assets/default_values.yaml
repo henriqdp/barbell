@@ -29,6 +29,23 @@ PART:
 JOINT:
   anchor_a: [0, 0]
   anchor_b: [0, 0]
+  anchor_a_offset: [0, 0]
+  anchor_b_offset: [0, 0]
+
+DISTANCE_JOINT:
+  anchor_a_offset: [0, 0]
+  anchor_b_offset: [0, 0]
+
+REVOLUTE_JOINT:
+  anchor_a: [0, 0]
+  anchor_b: [0, 0]
+
+PRISMATIC_JOINT:
+  enable_motor: false
+  max_motor_force: 0
+  motor_speed: 0
+  enable_limit: false
+
 
 
 OBJECT:
