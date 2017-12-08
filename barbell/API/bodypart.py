@@ -100,7 +100,11 @@ class BodyPart(object):
         elif part_values["type"] == 'circle':
             check_mandatory_keys(self.circle_mandatory_keys, part_values, self.name)
 
-    def apply_force(self, force_type, force_vector):
+    def apply_force(self, force_type, anchor, force_vector):
+        if force_type == 'rotate':
+            self.body.ApplyTorque(force_vector, True)
+            return
+
         if force_type == "local":
             force_vector = self.body.GetWorldVector(localVector=force_vector)
         elif force_type == "global":

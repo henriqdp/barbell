@@ -37,11 +37,15 @@ AGENT:
       lower_translation: -3
       upper_translation: 3
 
-  FORCES:
+  ACTIONS:
     - push_cart:
-        type: push
-        part: cart
-        on: [0,0]
+        type: local
+        target: cart
+        anchor: [0,0]
+    - yahoo:
+        type: rotate
+        target: polygon
+        anchor: [0, 1]
 
 ENVIRONMENT:
   gravity: [0, -10]

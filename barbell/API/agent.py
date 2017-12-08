@@ -1,19 +1,25 @@
 import sys
 
 from .bodypart import BodyPart
-from .utils import check_mandatory_keys
+from .utils import check_mandatory_keys, fill_in_with_default, load_default_values
 
 
 class Agent(object):
     name = "AGENT"
-    parts_name = "PARTS"
-    joints_name = "JOINTS"
+    parts_name = "PART"
+    actions_name = "ACTION"
 
     part_mandatory_keys = []
 
     joint_mandatory_keys = [
         'connects',
         'type'
+    ]
+
+    action_keys = [
+        'anchor',
+        'type',
+        'target',
     ]
 
     def __init__(self, environment, agent_structure):
@@ -29,6 +35,12 @@ class Agent(object):
             self.joints_structure = agent_structure["JOINTS"]
         else:
             print("[WARNING] No joints declared for the agent")
+
+        if "ACTIONS" in agent_structure:
+            self.possible_actions = []
+            self.initialize_actions(environment, agent_structure["ACTIONS"])
+        else:
+            sys.exit("[ERROR] No actions were defined for the agent")
 
     def initialize_parts(self, environment, parts):
         for part in parts:
@@ -58,6 +70,26 @@ class Agent(object):
 
             environment.create_joint(body_a, body_b, joints[i])
 
+    def initialize_actions(self, environment, actions):
+        for action in actions:
+            for action_name in action:
+                default_action = load_default_values(self.actions_name)
+                fill_in_with_default(action[action_name], default_action, self.action_keys)
+
+                self.possible_actions.append(action_name)
+                self.create_action(action_name, action[action_name])
+
+    def create_action(self, action_name, action_values):
+        part = self.parts[action_values['target']]
+        if action_values["type"] == 'local':
+            setattr(self, action_name, lambda x: part.apply_force('local', action_values['anchor'], x))
+        elif action_values["type"] == 'global':
+            setattr(self, action_name, lambda x: part.apply_force('global', action_values['anchor'], x))
+        elif action_values["type"] == 'rotate':
+            setattr(self, action_name, lambda x: part.apply_force('rotate', None, x))
+        else:
+            sys.exit("[ERROR] Unknown force type: %s" % action_values["type"])
+
     def reset(self, environment):
         for part in self.parts:
             self.parts[part].reset(environment)
@@ -66,8 +98,5 @@ class Agent(object):
     def get_state(self):
         states = {}
         for part in self.parts:
-                # if part == 'pole':
-                    # print('pole')
-                    # print(states[part])
                 states[part] = self.parts[part].read_state()
         return states

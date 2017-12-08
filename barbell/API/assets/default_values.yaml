@@ -46,6 +46,9 @@ PRISMATIC_JOINT:
   motor_speed: 0
   enable_limit: false
 
+ACTION:
+  anchor: [0,0]
+
 
 
 OBJECT:
