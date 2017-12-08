@@ -1,4 +1,4 @@
-import sys
+import sys, random
 
 from Box2D import b2World
 from Box2D.b2 import (polygonShape)
@@ -90,16 +90,32 @@ class Environment(b2World):
                     self.objects[object_name] = self.create_object(object_structure)
 
     def create_object(self, object_values):
-        if object_values["angle"] != 0:
+        if object_values["angle"] == 'random':
+            angle = deg_to_rad(random.randint(0, 360))
+        elif object_values["angle"] != 0:
             angle = deg_to_rad(object_values["angle"])
         else:
             angle = 0
 
+        if object_values["initial_position"] == "random":
+            if 'x_range' not in object_values or 'y_range' not in object_values:
+                sys.exit("[ERROR] x_range and y_range must be defined when the initial position of a part/object is set to random")
+            elif type(object_values['x_range']) != list or type(object_values['y_range']) != list:
+                sys.exit("[ERROR] x_range and y_range must be lists")
+            elif len(object_values['x_range']) != 2 or len(object_values['y_range']) != 2:
+                sys.exit("[ERROR] x_range and y_range must be 2 in length")
+            else:
+                x = random.uniform(object_values['x_range'][0], object_values['x_range'][1])
+                y = random.uniform(object_values['y_range'][0], object_values['y_range'][1])
+                initial_position = (round(x, 2), round(y, 2))
+        else:
+            initial_position = object_values["initial_position"]
+
         if object_values["static"] is True:
-            body = self.CreateStaticBody(position=object_values["initial_position"],
+            body = self.CreateStaticBody(position=initial_position,
                                          angle=angle)
         else:
-            body = self.CreateDynamicBody(position=object_values["initial_position"],
+            body = self.CreateDynamicBody(position=initial_position,
                                           angle=angle)
 
         if object_values["type"] == 'box':

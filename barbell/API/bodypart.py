@@ -1,4 +1,5 @@
 import sys
+import random
 
 from Box2D import b2Vec2
 
@@ -55,17 +56,31 @@ class BodyPart(object):
 
     def create_body(self, environment, part_values):
         # create part's body
-
-        if part_values["angle"] != 0:
+        if part_values["angle"] == 'random':
+            angle = deg_to_rad(random.randint(0, 360))
+        elif part_values["angle"] != 0:
             angle = deg_to_rad(part_values["angle"])
         else:
             angle = 0
 
+        if part_values["initial_position"] == "random":
+            if 'x_range' not in part_values or 'y_range' not in part_values:
+                sys.exit("[ERROR] x_range and y_range must be defined when the initial position of a part/object is set to random")
+            elif type(part_values['x_range']) != list or type(part_values['y_range']) != list:
+                sys.exit("[ERROR] x_range and y_range must be lists")
+            elif len(part_values['x_range']) != 2 or len(part_values['y_range']) != 2:
+                sys.exit("[ERROR] x_range and y_range must be 2 in length")
+            else:
+                x = random.uniform(part_values['x_range'][0], part_values['x_range'][1])
+                y = random.uniform(part_values['y_range'][0], part_values['y_range'][1])
+                initial_position = (round(x, 2), round(y, 2))
+        else:
+            initial_position = part_values["initial_position"]
         if part_values["static"] is True:
-            body = environment.CreateStaticBody(position=part_values["initial_position"],
+            body = environment.CreateStaticBody(position=initial_position,
                                                 angle=angle)
         else:
-            body = environment.CreateDynamicBody(position=part_values["initial_position"],
+            body = environment.CreateDynamicBody(position=initial_position,
                                                  angle=angle)
 
         if self.type == 'box':

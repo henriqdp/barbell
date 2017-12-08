@@ -29,8 +29,8 @@ def fill_in_with_default(values, default_values, keys):
     return values
 
 
-def deg_to_rad(radians):
-    return (radians * math.pi) / 180
+def deg_to_rad(degrees):
+    return (degrees * math.pi) / 180
 
 
 def vertices_box2d_to_pygame(body, screen, shape):

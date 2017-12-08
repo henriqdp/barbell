@@ -22,8 +22,11 @@ AGENT:
         angle: 35
     - polygon:
         type: polygon
-        initial_position: [20, 9]
+        initial_position: random
+        x_range: [2, 22]
+        y_range: [16, 17]
         vertices: [[-1,0], [0,1], [1,0]]
+        angle: random
         color: [255,63,63,0]
 
   JOINTS:
