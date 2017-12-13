@@ -91,3 +91,6 @@ ENV/
 # pybox2d example file
 example.py
 world.yaml
+
+# Tex folder
+tcc/

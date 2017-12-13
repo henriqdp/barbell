@@ -1,5 +1,4 @@
 import pygame
-import Box2D
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 from .utils import (load_default_values, fill_in_with_default,
                     vertices_box2d_to_pygame, get_circle_coordinates,
@@ -19,25 +18,28 @@ class Screen(object):
         'ppm'
     ]
 
-    def __init__(self, screen_structure):
+    def __init__(self, screen_structure, render):
         default_values = load_default_values("DOMAIN")
         screen_values = fill_in_with_default(screen_structure, default_values, self.keys)
         self.values = screen_values
         self.pygame = pygame
+        self.render = render
 
         screensize = self.get_pygame_screensize()
-        self.screen = self.pygame.display.set_mode(screensize, 0, 32)
-        self.pygame.display.set_caption(self.values["caption"])
-        self.clock = self.pygame.time.Clock()
+        if render:
+            self.screen = self.pygame.display.set_mode(screensize, 0, 32)
+            self.pygame.display.set_caption(self.values["caption"])
+            self.clock = self.pygame.time.Clock()
 
     def check_events(self):
         events = []
-        for event in self.pygame.event.get():
-            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                # The user closed the window or pressed escape
-                events.append('exit')
-            elif event.type == KEYDOWN:
-                events.append(event.key)
+        if self.render:
+            for event in self.pygame.event.get():
+                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                    # The user closed the window or pressed escape
+                    events.append('exit')
+                elif event.type == KEYDOWN:
+                    events.append(event.key)
         return events
 
     def fill(self):
@@ -127,6 +129,5 @@ class Screen(object):
         self.draw_environment(environment)
         if self.values["draw_joints"]:
             self.draw_joints(environment)
-        environment.step(self.values["target_fps"])
         self.step(self.values["target_fps"])
         self.flip()

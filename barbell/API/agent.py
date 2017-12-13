@@ -36,8 +36,8 @@ class Agent(object):
         else:
             print("[WARNING] No joints declared for the agent")
 
+        self.possible_actions = ['do_nothing']
         if "ACTIONS" in agent_structure:
-            self.possible_actions = []
             self.initialize_actions(environment, agent_structure["ACTIONS"])
         else:
             sys.exit("[ERROR] No actions were defined for the agent")
@@ -70,6 +70,9 @@ class Agent(object):
 
             environment.create_joint(body_a, body_b, joints[i])
 
+    def do_nothing(self, **kwargs):
+        pass
+
     def initialize_actions(self, environment, actions):
         for action in actions:
             for action_name in action:
@@ -80,6 +83,8 @@ class Agent(object):
                 self.create_action(action_name, action[action_name])
 
     def create_action(self, action_name, action_values):
+        if action_values['target'] not in self.parts:
+            sys.exit("[ERROR] part %s does not exist" % action_values['target'])
         part = self.parts[action_values['target']]
         if action_values["type"] == 'local':
             setattr(self, action_name, lambda x: part.apply_force('local', action_values['anchor'], x))

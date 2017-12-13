@@ -4,7 +4,7 @@ import random
 from Box2D import b2Vec2
 
 from .utils import (load_default_values, fill_in_with_default, deg_to_rad,
-                    check_mandatory_keys)
+                    check_mandatory_keys, rad_to_deg)
 
 
 class BodyPart(object):
@@ -134,7 +134,7 @@ class BodyPart(object):
         state = {
             'position': self.body.position,
             'angularVelocity': self.body.angularVelocity,
-            'angle': self.body.angle,
+            'angle': rad_to_deg(self.body.angle),
             'linearVelocity': (self.body.linearVelocity[0], self.body.linearVelocity[1]),
         }
         # print(self.body)

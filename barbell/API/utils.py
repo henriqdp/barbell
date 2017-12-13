@@ -33,6 +33,10 @@ def deg_to_rad(degrees):
     return (degrees * math.pi) / 180
 
 
+def rad_to_deg(radians):
+    return radians * (180 / math.pi)
+
+
 def vertices_box2d_to_pygame(body, screen, shape):
     vertices = [(body.transform * v) * screen.values["ppm"] for v in shape.vertices]
     vertices = [(v[0], screen.get_pygame_screensize()[1] - v[1]) for v in vertices]
